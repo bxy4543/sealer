@@ -33,16 +33,11 @@ import (
 var _ = Describe("sealer image", func() {
 
 	Context("pull image", func() {
-		pullImageNames := []string{
-			"registry.cn-qingdao.aliyuncs.com/sealer-io/kubernetes:v1.19.9",
-			"registry.cn-qingdao.aliyuncs.com/kubernetes:v1.19.9",
-			"sealer-io/kubernetes:v1.19.9",
-			"kubernetes:v1.19.9",
-		}
-		for i := range pullImageNames {
-			It(fmt.Sprintf("pull image %s", pullImageNames[i]), func() {
-				image.DoImageOps("pull", pullImageNames[i])
-				image.DoImageOps("rmi", pullImageNames[i])
+
+		for _, pullImageName := range settings.PullImageNames {
+			It(fmt.Sprintf("pull image %s", pullImageName), func() {
+				image.DoImageOps("pull", pullImageName)
+				image.DoImageOps("rmi", pullImageName)
 			})
 		}
 
@@ -61,11 +56,11 @@ var _ = Describe("sealer image", func() {
 	})
 
 	Context("remove image", func() {
-		It(fmt.Sprintf("remove image %s", settings.ImageNameForRun), func() {
+		It(fmt.Sprintf("remove image %s", settings.TestImageName), func() {
 			beforeDirMd5, err := utils.DirMD5(filepath.Dir(common.DefaultImageRootDir))
 			Expect(err).NotTo(HaveOccurred())
-			image.DoImageOps("pull", settings.ImageNameForRun)
-			image.DoImageOps("rmi", settings.ImageNameForRun)
+			image.DoImageOps("pull", settings.TestImageName)
+			image.DoImageOps("rmi", settings.TestImageName)
 			afterDirMd5, err := utils.DirMD5(filepath.Dir(common.DefaultImageRootDir))
 			Expect(err).NotTo(HaveOccurred())
 			Expect(afterDirMd5).To(Equal(beforeDirMd5))
@@ -73,39 +68,35 @@ var _ = Describe("sealer image", func() {
 
 		It("remove tag image", func() {
 			tagImageName := "e2e_image_test:v0.01"
-			image.DoImageOps("pull", settings.ImageNameForRun)
+			image.DoImageOps("pull", settings.TestImageName)
 			beforeDirMd5, err := utils.DirMD5(filepath.Dir(common.DefaultImageRootDir))
 			Expect(err).NotTo(HaveOccurred())
-			image.TagImages(settings.ImageNameForRun, tagImageName)
+			image.TagImages(settings.TestImageName, tagImageName)
 
 			image.DoImageOps("rmi", tagImageName)
 			afterDirMd5, err := utils.DirMD5(filepath.Dir(common.DefaultImageRootDir))
 			Expect(err).NotTo(HaveOccurred())
 			Expect(afterDirMd5).To(Equal(beforeDirMd5))
 
-			image.DoImageOps("rmi", settings.ImageNameForRun)
+			image.DoImageOps("rmi", settings.TestImageName)
 		})
 	})
 
 	Context("push image", func() {
 		BeforeEach(func() {
 			registry.Login()
-			image.DoImageOps("pull", settings.ImageNameForRun)
+			image.DoImageOps("pull", settings.TestImageName)
 		})
 		AfterEach(func() {
 			registry.Logout()
-			image.DoImageOps("rmi", settings.ImageNameForRun)
+			image.DoImageOps("rmi", settings.TestImageName)
 		})
-		var pushImageNames = []string{
-			"registry.cn-qingdao.aliyuncs.com/sealer-io/e2e_image_test:v0.01",
-			"sealer-io/e2e_image_test:v0.01",
-			"e2e_image_test:v0.01",
-		}
-		for i := range pushImageNames {
-			It(fmt.Sprintf("push image %s", pushImageNames[i]), func() {
-				image.TagImages(settings.ImageNameForRun, pushImageNames[i])
-				image.DoImageOps("push", pushImageNames[i])
-				image.DoImageOps("rmi", pushImageNames[i])
+
+		for i := range settings.PushImageNames {
+			It(fmt.Sprintf("push image %s", settings.PushImageNames[i]), func() {
+				image.TagImages(settings.TestImageName, settings.PushImageNames[i])
+				image.DoImageOps("push", settings.PushImageNames[i])
+				image.DoImageOps("rmi", settings.PushImageNames[i])
 			})
 		}
 	})
