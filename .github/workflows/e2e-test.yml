@@ -76,3 +76,14 @@ jobs:
         if: ${{ github.event.comment.body == '/test build' }}
         run: |
           ginkgo -v --focus="sealer build" test
+
+      - name: Run image test
+        shell: bash
+        working-directory: src/github.com/alibaba/sealer
+        env:
+          REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+          REGISTRY_URL: ${{ secrets.REGISTRY_URL }}
+        if: ${{ github.event.comment.body == '/test image' }}
+        run: |
+          ginkgo -v --focus="sealer image" test
