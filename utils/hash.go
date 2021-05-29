@@ -5,13 +5,15 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
+	"path/filepath"
 )
 
 //DirMD5 count files md5
-/*func DirMD5(dirName string) string {
+func DirMD5(dirName string) (string, error) {
 	var md5Value []byte
-	filepath.Walk(dirName, func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk(dirName, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return fmt.Errorf("access path error %v", err)
 		}
@@ -26,9 +28,12 @@ import (
 		}
 		return nil
 	})
+	if err != nil {
+		return "", err
+	}
 	md5Values := md5.Sum(md5Value)
-	return hex.EncodeToString(md5Values[:])
-}*/
+	return hex.EncodeToString(md5Values[:]), nil
+}
 
 func MD5(body []byte) string {
 	bytes := md5.Sum(body)
