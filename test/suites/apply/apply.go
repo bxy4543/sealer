@@ -16,6 +16,7 @@ package apply
 
 import (
 	"fmt"
+	"github.com/alibaba/sealer/test/testhelper/settings"
 	"path/filepath"
 
 	"github.com/onsi/gomega"
@@ -36,7 +37,7 @@ func GetRawClusterFilePath() string {
 }
 
 func DeleteCluster(clusterFile string) {
-	cmd := "sealer delete -f " + clusterFile
+	cmd := fmt.Sprintf("%s delete -f %s", settings.DefaultSealerBin, clusterFile)
 	testhelper.RunCmdAndCheckResult(cmd, 0)
 }
 
@@ -71,5 +72,5 @@ func CheckClusterPods() int {
 }
 
 func SealerApplyCmd(clusterFile string) string {
-	return fmt.Sprintf("sealer apply -f %s", clusterFile)
+	return fmt.Sprintf("%s apply -f %s", settings.DefaultSealerBin, clusterFile)
 }
