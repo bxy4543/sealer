@@ -66,10 +66,12 @@ var _ = Describe("sealer image", func() {
 			image.DoImageOps("images", "")
 
 			beforeEnvMd5 := image.GetEnvDirMd5()
+			By(fmt.Sprintf("beforeEnvMd5 is %s", beforeEnvMd5))
 			Expect(beforeEnvMd5).NotTo(Equal(""))
 			image.DoImageOps("pull", settings.TestImageName)
 			image.DoImageOps("rmi", settings.TestImageName)
 			afterEnvMd5 := image.GetEnvDirMd5()
+			By(fmt.Sprintf("afterEnvMd5 is %s", afterEnvMd5))
 			Expect(beforeEnvMd5).To(Equal(afterEnvMd5))
 		})
 
@@ -78,12 +80,14 @@ var _ = Describe("sealer image", func() {
 			image.DoImageOps("pull", settings.TestImageName)
 
 			beforeEnvMd5 := image.GetEnvDirMd5()
+			By(fmt.Sprintf("beforeEnvMd5 is %s", beforeEnvMd5))
 			Expect(beforeEnvMd5).NotTo(Equal(""))
 			image.TagImages(settings.TestImageName, tagImageName)
 
 			image.DoImageOps("rmi", tagImageName)
 
 			afterEnvMd5 := image.GetEnvDirMd5()
+			By(fmt.Sprintf("afterEnvMd5 is %s", afterEnvMd5))
 			Expect(afterEnvMd5).To(Equal(beforeEnvMd5))
 
 			image.DoImageOps("rmi", settings.TestImageName)
