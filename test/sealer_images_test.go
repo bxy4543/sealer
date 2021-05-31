@@ -15,13 +15,14 @@
 package test
 
 import (
+	"path/filepath"
+
 	"github.com/alibaba/sealer/common"
 	"github.com/alibaba/sealer/test/suites/image"
 	"github.com/alibaba/sealer/test/testhelper/settings"
 	"github.com/alibaba/sealer/utils"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"path/filepath"
 )
 
 var _ = Describe("sealer image", func() {
@@ -72,14 +73,14 @@ var _ = Describe("sealer image", func() {
 		It("remove tag image", func() {
 			tagImageName := "e2e_image_test:v0.01"
 			image.DoImageOps("pull", settings.TestImageName)
-			//beforeDirMd5, err := utils.DirMD5(filepath.Dir(common.DefaultImageRootDir))
-			//Expect(err).NotTo(HaveOccurred())
+			beforeDirMd5, err := utils.DirMD5(filepath.Dir(common.DefaultImageRootDir))
+			Expect(err).NotTo(HaveOccurred())
 			image.TagImages(settings.TestImageName, tagImageName)
 
 			image.DoImageOps("rmi", tagImageName)
-			//afterDirMd5, err := utils.DirMD5(filepath.Dir(common.DefaultImageRootDir))
-			//Expect(err).NotTo(HaveOccurred())
-			//Expect(afterDirMd5).To(Equal(beforeDirMd5))
+			afterDirMd5, err := utils.DirMD5(filepath.Dir(common.DefaultImageRootDir))
+			Expect(err).NotTo(HaveOccurred())
+			Expect(afterDirMd5).To(Equal(beforeDirMd5))
 
 			image.DoImageOps("rmi", settings.TestImageName)
 		})
