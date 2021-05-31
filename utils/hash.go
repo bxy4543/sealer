@@ -27,7 +27,7 @@ import (
 //DirMD5 count files md5
 func DirMD5(dirName string) (string, error) {
 	var md5Value []byte
-	err := filepath.Walk(dirName, func(path string, info os.FileInfo, err error) error {
+	err := filepath.WalkDir(dirName, func(path string, info os.DirEntry, err error) error {
 		if err != nil {
 			return fmt.Errorf("access path error %v", err)
 		}

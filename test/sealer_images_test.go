@@ -15,24 +15,18 @@
 package test
 
 import (
-	"fmt"
-	"path/filepath"
-
-	"github.com/alibaba/sealer/test/testhelper"
-
 	"github.com/alibaba/sealer/common"
 	"github.com/alibaba/sealer/test/suites/image"
-	"github.com/alibaba/sealer/test/suites/registry"
 	"github.com/alibaba/sealer/test/testhelper/settings"
 	"github.com/alibaba/sealer/utils"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	. "github.com/onsi/gomega/gexec"
+	"path/filepath"
 )
 
 var _ = Describe("sealer image", func() {
 
-	Context("pull image", func() {
+	/*Context("pull image", func() {
 		pullImageNames := []string{
 			"registry.cn-qingdao.aliyuncs.com/sealer-io/kubernetes:v1.19.9",
 			"registry.cn-qingdao.aliyuncs.com/kubernetes:v1.19.9",
@@ -62,10 +56,10 @@ var _ = Describe("sealer image", func() {
 				})
 			}
 		})
-	})
+	})*/
 
 	Context("remove image", func() {
-		It(fmt.Sprintf("remove image %s", settings.TestImageName), func() {
+		/*It(fmt.Sprintf("remove image %s", settings.TestImageName), func() {
 			beforeDirMd5, err := utils.DirMD5(filepath.Dir(common.DefaultImageRootDir))
 			Expect(err).NotTo(HaveOccurred())
 			image.DoImageOps("pull", settings.TestImageName)
@@ -73,7 +67,7 @@ var _ = Describe("sealer image", func() {
 			afterDirMd5, err := utils.DirMD5(filepath.Dir(common.DefaultImageRootDir))
 			Expect(err).NotTo(HaveOccurred())
 			Expect(afterDirMd5).To(Equal(beforeDirMd5))
-		})
+		})*/
 
 		It("remove tag image", func() {
 			tagImageName := "e2e_image_test:v0.01"
@@ -91,7 +85,7 @@ var _ = Describe("sealer image", func() {
 		})
 	})
 
-	Context("push image", func() {
+	/*Context("push image", func() {
 		BeforeEach(func() {
 			registry.Login()
 			image.DoImageOps("pull", settings.TestImageName)
@@ -114,5 +108,5 @@ var _ = Describe("sealer image", func() {
 				})
 			}
 		})
-	})
+	})*/
 })
