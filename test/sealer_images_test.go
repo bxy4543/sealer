@@ -15,78 +15,82 @@
 package test
 
 import (
-	"path/filepath"
+	"fmt"
 
-	"github.com/alibaba/sealer/common"
 	"github.com/alibaba/sealer/test/suites/image"
+	"github.com/alibaba/sealer/test/suites/registry"
+	"github.com/alibaba/sealer/test/testhelper"
 	"github.com/alibaba/sealer/test/testhelper/settings"
-	"github.com/alibaba/sealer/utils"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	. "github.com/onsi/gomega/gexec"
 )
 
 var _ = Describe("sealer image", func() {
 
-	/*Context("pull image", func() {
+	Context("pull image", func() {
 		pullImageNames := []string{
 			"registry.cn-qingdao.aliyuncs.com/sealer-io/kubernetes:v1.19.9",
 			"registry.cn-qingdao.aliyuncs.com/kubernetes:v1.19.9",
 			"sealer-io/kubernetes:v1.19.9",
 			"kubernetes:v1.19.9",
 		}
-		It("pull true image", func() {
-			for i := range pullImageNames {
-				By(fmt.Sprintf("pull image %s", pullImageNames[i]), func() {
-					image.DoImageOps("pull", pullImageNames[i])
-					image.DoImageOps("rmi", pullImageNames[i])
-				})
-			}
-		})
+
+		for _, imageName := range pullImageNames {
+			imageName := imageName
+			It(fmt.Sprintf("pull image %s", imageName), func() {
+				image.DoImageOps("pull", imageName)
+				image.DoImageOps("rmi", imageName)
+			})
+		}
 
 		faultPullImageNames := []string{
 			"registry.cn-qingdao.aliyuncs.com/sealer-io:latest",
 			"registry.cn-qingdao.aliyuncs.com:latest",
 			"sealer-io:latest",
 		}
-		It("pull fault image", func() {
-			for i := range faultPullImageNames {
-				By(fmt.Sprintf("pull fault image %s", faultPullImageNames[i]), func() {
-					sess, err := testhelper.Start(fmt.Sprintf("%s pull %s", settings.DefaultSealerBin, faultPullImageNames[i]))
-					Expect(err).NotTo(HaveOccurred())
-					Eventually(sess, settings.MaxWaiteTime).ShouldNot(Exit(0))
-				})
-			}
-		})
-	})*/
+
+		for _, faultImageName := range faultPullImageNames {
+			faultImageName := faultImageName
+			It(fmt.Sprintf("pull fault image %s", faultImageName), func() {
+				sess, err := testhelper.Start(fmt.Sprintf("%s pull %s", settings.DefaultSealerBin, faultImageName))
+				Expect(err).NotTo(HaveOccurred())
+				Eventually(sess, settings.MaxWaiteTime).ShouldNot(Exit(0))
+			})
+		}
+
+	})
 
 	Context("remove image", func() {
-		/*It(fmt.Sprintf("remove image %s", settings.TestImageName), func() {
-			beforeDirMd5, err := utils.DirMD5(filepath.Dir(common.DefaultImageRootDir))
-			Expect(err).NotTo(HaveOccurred())
+		It(fmt.Sprintf("remove image %s", settings.TestImageName), func() {
+			image.DoImageOps("images", "")
+
+			beforeEnvMd5 := image.GetEnvDirMd5()
+			Expect(beforeEnvMd5).NotTo(Equal(""))
 			image.DoImageOps("pull", settings.TestImageName)
 			image.DoImageOps("rmi", settings.TestImageName)
-			afterDirMd5, err := utils.DirMD5(filepath.Dir(common.DefaultImageRootDir))
-			Expect(err).NotTo(HaveOccurred())
-			Expect(afterDirMd5).To(Equal(beforeDirMd5))
-		})*/
+			afterEnvMd5 := image.GetEnvDirMd5()
+			Expect(beforeEnvMd5).To(Equal(afterEnvMd5))
+		})
 
 		It("remove tag image", func() {
 			tagImageName := "e2e_image_test:v0.01"
 			image.DoImageOps("pull", settings.TestImageName)
-			beforeDirMd5, err := utils.DirMD5(filepath.Dir(common.DefaultImageRootDir))
-			Expect(err).NotTo(HaveOccurred())
+
+			beforeEnvMd5 := image.GetEnvDirMd5()
+			Expect(beforeEnvMd5).NotTo(Equal(""))
 			image.TagImages(settings.TestImageName, tagImageName)
 
 			image.DoImageOps("rmi", tagImageName)
-			afterDirMd5, err := utils.DirMD5(filepath.Dir(common.DefaultImageRootDir))
-			Expect(err).NotTo(HaveOccurred())
-			Expect(afterDirMd5).To(Equal(beforeDirMd5))
+
+			afterEnvMd5 := image.GetEnvDirMd5()
+			Expect(afterEnvMd5).To(Equal(beforeEnvMd5))
 
 			image.DoImageOps("rmi", settings.TestImageName)
 		})
 	})
 
-	/*Context("push image", func() {
+	Context("push image", func() {
 		BeforeEach(func() {
 			registry.Login()
 			image.DoImageOps("pull", settings.TestImageName)
@@ -100,14 +104,14 @@ var _ = Describe("sealer image", func() {
 			"sealer-io/e2e_image_test:v0.01",
 			"e2e_image_test:v0.01",
 		}
-		It("push image to repository", func() {
-			for i := range pushImageNames {
-				By(fmt.Sprintf("push image %s", pushImageNames[i]), func() {
-					image.TagImages(settings.TestImageName, pushImageNames[i])
-					image.DoImageOps("push", pushImageNames[i])
-					image.DoImageOps("rmi", pushImageNames[i])
-				})
-			}
-		})
-	})*/
+
+		for _, pushImage := range pushImageNames {
+			pushImage := pushImage
+			It(fmt.Sprintf("push image %s", pushImage), func() {
+				image.TagImages(settings.TestImageName, pushImage)
+				image.DoImageOps("push", pushImage)
+				image.DoImageOps("rmi", pushImage)
+			})
+		}
+	})
 })

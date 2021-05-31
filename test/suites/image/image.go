@@ -16,6 +16,13 @@ package image
 
 import (
 	"fmt"
+	"io"
+	"path/filepath"
+
+	"github.com/alibaba/sealer/common"
+	"github.com/alibaba/sealer/utils"
+	"github.com/onsi/ginkgo"
+	"github.com/onsi/gomega"
 
 	"github.com/alibaba/sealer/test/testhelper/settings"
 
@@ -33,6 +40,8 @@ func DoImageOps(action, imageName string) {
 		cmd = fmt.Sprintf("%s rmi %s", settings.DefaultSealerBin, imageName)
 	case "run":
 		cmd = fmt.Sprintf("%s run %s", settings.DefaultSealerBin, imageName)
+	case "images":
+		cmd = fmt.Sprintf("%s images", settings.DefaultSealerBin)
 	}
 
 	testhelper.RunCmdAndCheckResult(cmd, 0)
@@ -40,4 +49,13 @@ func DoImageOps(action, imageName string) {
 func TagImages(oldName, newName string) {
 	cmd := fmt.Sprintf("%s tag %s %s", settings.DefaultSealerBin, oldName, newName)
 	testhelper.RunCmdAndCheckResult(cmd, 0)
+}
+
+func GetEnvDirMd5() string {
+	cmd := fmt.Sprintf("sudo -E find %s -type f -print0|xargs -0 sudo md5sum|cut -d\" \" -f1|md5sum|cut -d\" \" -f1\n", filepath.Dir(common.DefaultImageRootDir))
+	dirMd5, err := utils.RunSimpleCmd(cmd)
+	gomega.Expect(err).NotTo(gomega.HaveOccurred())
+	_, err = io.WriteString(ginkgo.GinkgoWriter, cmd)
+	gomega.Expect(err).NotTo(gomega.HaveOccurred())
+	return dirMd5
 }
