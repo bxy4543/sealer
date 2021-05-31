@@ -33,12 +33,29 @@ import (
 var _ = Describe("sealer image", func() {
 
 	Context("pull image", func() {
-
-		for _, pullImageName := range settings.PullImageNames {
-			It(fmt.Sprintf("pull image %s", pullImageName), func() {
-				image.DoImageOps("pull", pullImageName)
-				image.DoImageOps("rmi", pullImageName)
-			})
+		for i := 0; i < len(settings.PullImageNames); i++ {
+			switch i {
+			case 0:
+				It(fmt.Sprintf("pull image %s", settings.PullImageNames[0]), func() {
+					image.DoImageOps("pull", settings.PullImageNames[0])
+					image.DoImageOps("rmi", settings.PullImageNames[0])
+				})
+			case 1:
+				It(fmt.Sprintf("pull image %s", settings.PullImageNames[1]), func() {
+					image.DoImageOps("pull", settings.PullImageNames[1])
+					image.DoImageOps("rmi", settings.PullImageNames[1])
+				})
+			case 2:
+				It(fmt.Sprintf("pull image %s", settings.PullImageNames[2]), func() {
+					image.DoImageOps("pull", settings.PullImageNames[2])
+					image.DoImageOps("rmi", settings.PullImageNames[2])
+				})
+			case 3:
+				It(fmt.Sprintf("pull image %s", settings.PullImageNames[3]), func() {
+					image.DoImageOps("pull", settings.PullImageNames[3])
+					image.DoImageOps("rmi", settings.PullImageNames[3])
+				})
+			}
 		}
 
 		faultPullImageNames := []string{
