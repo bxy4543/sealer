@@ -61,19 +61,8 @@ var (
 	RegistryUsername       = os.Getenv("REGISTRY_USERNAME")
 	RegistryPasswd         = os.Getenv("REGISTRY_PASSWORD")
 
-	AccessKey      = os.Getenv("ACCESSKEYID")
-	AccessSecret   = os.Getenv("ACCESSKEYSECRET")
-	Region         = os.Getenv("RegionID")
-	TestImageName  = "kubernetes:v1.19.9"
-	PullImageNames = []string{
-		"registry.cn-qingdao.aliyuncs.com/sealer-io/kubernetes:v1.19.9",
-		"registry.cn-qingdao.aliyuncs.com/kubernetes:v1.19.9",
-		"sealer-io/kubernetes:v1.19.9",
-		"kubernetes:v1.19.9",
-	}
-	PushImageNames = []string{
-		"registry.cn-qingdao.aliyuncs.com/sealer-io/e2e_image_test:v0.01",
-		"sealer-io/e2e_image_test:v0.01",
-		"e2e_image_test:v0.01",
-	}
+	AccessKey     = os.Getenv("ACCESSKEYID")
+	AccessSecret  = os.Getenv("ACCESSKEYSECRET")
+	Region        = os.Getenv("RegionID")
+	TestImageName = "kubernetes:v1.19.9"
 )

@@ -33,43 +33,35 @@ import (
 var _ = Describe("sealer image", func() {
 
 	Context("pull image", func() {
-		for i := 0; i < len(settings.PullImageNames); i++ {
-			switch i {
-			case 0:
-				It(fmt.Sprintf("pull image %s", settings.PullImageNames[0]), func() {
-					image.DoImageOps("pull", settings.PullImageNames[0])
-					image.DoImageOps("rmi", settings.PullImageNames[0])
-				})
-			case 1:
-				It(fmt.Sprintf("pull image %s", settings.PullImageNames[1]), func() {
-					image.DoImageOps("pull", settings.PullImageNames[1])
-					image.DoImageOps("rmi", settings.PullImageNames[1])
-				})
-			case 2:
-				It(fmt.Sprintf("pull image %s", settings.PullImageNames[2]), func() {
-					image.DoImageOps("pull", settings.PullImageNames[2])
-					image.DoImageOps("rmi", settings.PullImageNames[2])
-				})
-			case 3:
-				It(fmt.Sprintf("pull image %s", settings.PullImageNames[3]), func() {
-					image.DoImageOps("pull", settings.PullImageNames[3])
-					image.DoImageOps("rmi", settings.PullImageNames[3])
+		pullImageNames := []string{
+			"registry.cn-qingdao.aliyuncs.com/sealer-io/kubernetes:v1.19.9",
+			"registry.cn-qingdao.aliyuncs.com/kubernetes:v1.19.9",
+			"sealer-io/kubernetes:v1.19.9",
+			"kubernetes:v1.19.9",
+		}
+		It("pull true image", func() {
+			for i := range pullImageNames {
+				By(fmt.Sprintf("pull image %s", pullImageNames[i]), func() {
+					image.DoImageOps("pull", pullImageNames[i])
+					image.DoImageOps("rmi", pullImageNames[i])
 				})
 			}
-		}
+		})
 
 		faultPullImageNames := []string{
 			"registry.cn-qingdao.aliyuncs.com/sealer-io:latest",
 			"registry.cn-qingdao.aliyuncs.com:latest",
 			"sealer-io:latest",
 		}
-		for i := range faultPullImageNames {
-			It(fmt.Sprintf("pull fault image %s", faultPullImageNames[i]), func() {
-				sess, err := testhelper.Start(fmt.Sprintf("%s pull %s", settings.SealerBinPath, faultPullImageNames[i]))
-				Expect(err).NotTo(HaveOccurred())
-				Eventually(sess, settings.MaxWaiteTime).ShouldNot(Exit(0))
-			})
-		}
+		It("pull fault image", func() {
+			for i := range faultPullImageNames {
+				By(fmt.Sprintf("pull fault image %s", faultPullImageNames[i]), func() {
+					sess, err := testhelper.Start(fmt.Sprintf("%s pull %s", settings.SealerBinPath, faultPullImageNames[i]))
+					Expect(err).NotTo(HaveOccurred())
+					Eventually(sess, settings.MaxWaiteTime).ShouldNot(Exit(0))
+				})
+			}
+		})
 	})
 
 	Context("remove image", func() {
@@ -108,13 +100,19 @@ var _ = Describe("sealer image", func() {
 			registry.Logout()
 			image.DoImageOps("rmi", settings.TestImageName)
 		})
-
-		for i := range settings.PushImageNames {
-			It(fmt.Sprintf("push image %s", settings.PushImageNames[i]), func() {
-				image.TagImages(settings.TestImageName, settings.PushImageNames[i])
-				image.DoImageOps("push", settings.PushImageNames[i])
-				image.DoImageOps("rmi", settings.PushImageNames[i])
-			})
+		pushImageNames := []string{
+			"registry.cn-qingdao.aliyuncs.com/sealer-io/e2e_image_test:v0.01",
+			"sealer-io/e2e_image_test:v0.01",
+			"e2e_image_test:v0.01",
 		}
+		It("push image ", func() {
+			for i := range pushImageNames {
+				By(fmt.Sprintf("push image %s", pushImageNames[i]), func() {
+					image.TagImages(settings.TestImageName, pushImageNames[i])
+					image.DoImageOps("push", pushImageNames[i])
+					image.DoImageOps("rmi", pushImageNames[i])
+				})
+			}
+		})
 	})
 })
