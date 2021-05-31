@@ -16,8 +16,9 @@ package apply
 
 import (
 	"fmt"
-	"github.com/alibaba/sealer/test/testhelper/settings"
 	"path/filepath"
+
+	"github.com/alibaba/sealer/test/testhelper/settings"
 
 	"github.com/onsi/gomega"
 

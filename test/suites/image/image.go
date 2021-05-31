@@ -16,6 +16,7 @@ package image
 
 import (
 	"fmt"
+
 	"github.com/alibaba/sealer/test/testhelper/settings"
 
 	"github.com/alibaba/sealer/test/testhelper"
