@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"path/filepath"
 
+	"github.com/alibaba/sealer/test/testhelper"
+
 	"github.com/alibaba/sealer/common"
 	"github.com/alibaba/sealer/test/suites/image"
 	"github.com/alibaba/sealer/test/suites/registry"
-	"github.com/alibaba/sealer/test/testhelper"
 	"github.com/alibaba/sealer/test/testhelper/settings"
 	"github.com/alibaba/sealer/utils"
 	. "github.com/onsi/ginkgo"
@@ -26,9 +27,7 @@ var _ = Describe("sealer image", func() {
 		}
 		for _, imageName := range pullImageNames {
 			It(fmt.Sprintf("pull image %s", imageName), func() {
-				sess, err := testhelper.Start(fmt.Sprintf("sealer pull %s", imageName))
-				Expect(err).NotTo(HaveOccurred())
-				Eventually(sess, settings.MaxWaiteTime).Should(Exit(0))
+				image.DoImageOps("pull", imageName)
 				image.DoImageOps("rmi", imageName)
 			})
 		}
@@ -40,7 +39,7 @@ var _ = Describe("sealer image", func() {
 		}
 		for _, imageName := range faultPullImageNames {
 			It(fmt.Sprintf("pull fault image %s", imageName), func() {
-				sess, err := testhelper.Start(fmt.Sprintf("sealer pull %s", imageName))
+				sess, err := testhelper.Start(fmt.Sprintf("%s pull %s", settings.SealerBinPath, imageName))
 				Expect(err).NotTo(HaveOccurred())
 				Eventually(sess, settings.MaxWaiteTime).ShouldNot(Exit(0))
 			})
@@ -49,31 +48,28 @@ var _ = Describe("sealer image", func() {
 
 	Context("remove image", func() {
 		It(fmt.Sprintf("remove image %s", settings.TestImageName), func() {
-			beforeDirMd5, _ := utils.DirMD5(filepath.Dir(common.DefaultImageRootDir))
-			image.DoImageOps("pull", settings.TestImageName)
-			sess, err := testhelper.Start(fmt.Sprintf("sealer rmi %s", settings.TestImageName))
+			beforeDirMd5, err := utils.DirMD5(filepath.Dir(common.DefaultImageRootDir))
 			Expect(err).NotTo(HaveOccurred())
-			Eventually(sess, settings.MaxWaiteTime).Should(Exit(0))
-			afterDirMd5, _ := utils.DirMD5(filepath.Dir(common.DefaultImageRootDir))
+			image.DoImageOps("pull", settings.TestImageName)
+			image.DoImageOps("rmi", settings.TestImageName)
+			afterDirMd5, err := utils.DirMD5(filepath.Dir(common.DefaultImageRootDir))
+			Expect(err).NotTo(HaveOccurred())
 			Expect(afterDirMd5).To(Equal(beforeDirMd5))
 		})
 
 		It("remove tag image", func() {
 			tagImageName := "e2e_image_test:v0.01"
 			image.DoImageOps("pull", settings.TestImageName)
-			beforeDirMd5, _ := utils.DirMD5(filepath.Dir(common.DefaultImageRootDir))
-
+			beforeDirMd5, err := utils.DirMD5(filepath.Dir(common.DefaultImageRootDir))
+			Expect(err).NotTo(HaveOccurred())
 			image.TagImages(settings.TestImageName, tagImageName)
 
-			sess, err := testhelper.Start(fmt.Sprintf("sealer rmi %s", tagImageName))
+			image.DoImageOps("rmi", tagImageName)
+			afterDirMd5, err := utils.DirMD5(filepath.Dir(common.DefaultImageRootDir))
 			Expect(err).NotTo(HaveOccurred())
-			Eventually(sess, settings.MaxWaiteTime).Should(Exit(0))
-			afterDirMd5, _ := utils.DirMD5(filepath.Dir(common.DefaultImageRootDir))
 			Expect(afterDirMd5).To(Equal(beforeDirMd5))
 
-			sess, err = testhelper.Start(fmt.Sprintf("sealer rmi %s", settings.TestImageName))
-			Expect(err).NotTo(HaveOccurred())
-			Eventually(sess, settings.MaxWaiteTime).Should(Exit(0))
+			image.DoImageOps("rmi", settings.TestImageName)
 		})
 	})
 
@@ -94,9 +90,7 @@ var _ = Describe("sealer image", func() {
 		for _, pushImageName := range pushImageNames {
 			It(fmt.Sprintf("push image %s", pushImageName), func() {
 				image.TagImages(settings.TestImageName, pushImageName)
-				sess, err := testhelper.Start(fmt.Sprintf("sealer push %s", pushImageName))
-				Expect(err).NotTo(HaveOccurred())
-				Eventually(sess, settings.MaxWaiteTime).Should(Exit(0))
+				image.DoImageOps("push", pushImageName)
 				image.DoImageOps("rmi", pushImageName)
 			})
 		}

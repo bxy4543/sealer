@@ -62,7 +62,7 @@ func (c *CloudApplier) Apply() error {
 	cluster := c.ClusterDesired
 	clusterCurrent, err := GetCurrentCluster()
 	if err != nil {
-		return fmt.Errorf("failed to get current clcuster %v", err)
+		return fmt.Errorf("failed to get current cluster %v", err)
 	}
 
 	cloudProvider := infra.NewDefaultProvider(cluster)
