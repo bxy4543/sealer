@@ -1,6 +1,9 @@
 name: Sealer-Test-Image
 
 on:
+  check_run:
+    types:
+      - created
   push:
     branches: "*"
   pull_request:
