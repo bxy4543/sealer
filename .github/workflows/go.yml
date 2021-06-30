@@ -10,10 +10,6 @@ on:
       - 'vendor/**'
       - '*.md'
       - '*.yml'
-  issue_comment:
-    types:
-      - created
-
 jobs:
 
   build:
@@ -32,7 +28,8 @@ jobs:
         uses: actions/checkout@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          ref: ${{ github.ref }}
+          repository: ${{fromJson(steps.request.outputs.data).head.repo.full_name}}
+          ref: ${{fromJson(steps.request.outputs.data).head.ref}}
           path: src/github.com/alibaba/sealer
       - name: Check out code lic
         working-directory: src/github.com/alibaba/sealer
