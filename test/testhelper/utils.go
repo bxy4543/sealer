@@ -59,7 +59,7 @@ func WriteFile(fileName string, content []byte) error {
 		}
 	}
 
-	if err := utils.AtomicWriteFile(fileName, content, settings.FileMode0644); err != nil {
+	if err := ioutil.WriteFile(fileName, content, settings.FileMode0644); err != nil {
 		return err
 	}
 	return nil
