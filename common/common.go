@@ -88,7 +88,7 @@ const (
 const (
 	LocalBuild     = "local"
 	ContainerBuild = "container"
-	AliCloudBuild  = "ali_cloud"
+	AliCloudBuild  = "cloud"
 )
 const (
 	BAREMETAL = "BAREMETAL"
