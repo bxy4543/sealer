@@ -15,6 +15,7 @@
 package test
 
 import (
+	"github.com/alibaba/sealer/test/suites/apply"
 	"github.com/alibaba/sealer/test/suites/image"
 
 	"github.com/alibaba/sealer/test/suites/registry"
@@ -26,6 +27,7 @@ var _ = Describe("sealer login", func() {
 	Context("login docker registry", func() {
 		AfterEach(func() {
 			registry.Logout()
+			apply.InstallDocker()
 		})
 		It("with correct name and password", func() {
 			image.CheckLoginResult(

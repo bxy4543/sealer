@@ -189,11 +189,23 @@ func MarshalClusterToFile(ClusterFile string, cluster *v1.Cluster) {
 }
 
 func InstallDocker() {
+	RunSimCmd("sudo swapoff -a")
 	_, err := utils.RunSimpleCmd("docker -v")
 	if err == nil {
+		fmt.Println("docker exist")
 		return
 	}
 	installCmd := "curl -fsSL https://get.docker.com | bash -s docker --mirror aliyun && systemctl start docker"
 	_, err = utils.RunSimpleCmd(installCmd)
 	gomega.Expect(err).NotTo(gomega.HaveOccurred())
+	fmt.Println("installed docker success")
+}
+
+func RunSimCmd(cmd string) {
+	_, err := utils.RunSimpleCmd(cmd)
+	if err == nil {
+		fmt.Printf("%s, exec success", cmd)
+		return
+	}
+	fmt.Printf("%s exec failed, %v", cmd, err)
 }

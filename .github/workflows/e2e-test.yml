@@ -63,7 +63,7 @@ jobs:
           ACCESSKEYID: ${{ secrets.ACCESSKEYID }}
           ACCESSKEYSECRET: ${{ secrets.ACCESSKEYSECRET }}
           RegionID: ${{ secrets.RegionID }}
-        if: ${{ github.event.comment.body == '/test all' || github.event_name == 'push' }}
+        if: ${{ github.event.comment.body == '/test all' }}
         run: |
           ginkgo -v test
         working-directory: src/github.com/alibaba/sealer
@@ -120,7 +120,7 @@ jobs:
           REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
           REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
           REGISTRY_URL: ${{ secrets.REGISTRY_URL }}
-        if: ${{ github.event.comment.body == '/test login' }}
+        if: ${{ github.event.comment.body == '/test login' || github.event_name == 'push' }}
         run: |
           ginkgo -v --focus="sealer login" test
 

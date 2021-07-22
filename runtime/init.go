@@ -201,7 +201,6 @@ func (d *Default) InitMaster0() error {
 	if err != nil {
 		return err
 	}
-
 	logger.Info("start to init master0...")
 	cmdInit := d.Command(d.Metadata.Version, InitMaster)
 
