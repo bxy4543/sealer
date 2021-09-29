@@ -19,6 +19,9 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"time"
+
+	"github.com/onsi/gomega/gexec"
 
 	v1 "github.com/alibaba/sealer/types/api/v1"
 	"github.com/alibaba/sealer/utils"
@@ -118,4 +121,38 @@ func DeleteFileLocally(filePath string) {
 	cmd := fmt.Sprintf("sudo -E rm -rf %s", filePath)
 	_, err := utils.RunSimpleCmd(cmd)
 	gomega.Expect(err).NotTo(gomega.HaveOccurred())
+}
+
+func CheckErr(err error) {
+	gomega.Expect(err).NotTo(gomega.HaveOccurred())
+}
+
+func CheckNotNil(obj interface{}) {
+	gomega.Expect(obj).NotTo(gomega.BeNil())
+}
+
+func CheckEqual(obj1 interface{}, obj2 interface{}) {
+	gomega.Expect(obj1).To(gomega.Equal(obj2))
+}
+
+func CheckNotEqual(obj1 interface{}, obj2 interface{}) {
+	gomega.Expect(obj1).NotTo(gomega.Equal(obj2))
+}
+
+func CheckExit0(sess *gexec.Session, waitTime time.Duration) {
+	gomega.Eventually(sess, waitTime).Should(gexec.Exit(0))
+}
+func CheckNotExit0(sess *gexec.Session, waitTime time.Duration) {
+	gomega.Eventually(sess, waitTime).ShouldNot(gexec.Exit(0))
+}
+
+func CheckFuncBeTrue(f func() bool, t time.Duration) {
+	gomega.Eventually(f(), t).Should(gomega.BeTrue())
+}
+
+func CheckBeTrue(b bool) {
+	gomega.Eventually(b).Should(gomega.BeTrue())
+}
+func CheckNotBeTrue(b bool) {
+	gomega.Eventually(b).ShouldNot(gomega.BeTrue())
 }
