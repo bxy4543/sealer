@@ -28,6 +28,10 @@ func NewShellPlugin() Interface {
 	return &Sheller{}
 }
 
+func NewShellPlugin() Interface {
+	return &Sheller{}
+}
+
 func (s Sheller) Run(context Context, phase Phase) error {
 	if string(phase) != context.Plugin.Spec.Action || context.Plugin.Spec.Type != ShellPlugin {
 		return nil
