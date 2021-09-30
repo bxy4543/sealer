@@ -70,7 +70,7 @@ var _ = Describe("sealer image", func() {
 				image.TagImages(settings.TestImageName, tagImageName)
 				testhelper.CheckBeTrue(build.CheckIsImageExist(tagImageName))
 				image.DoImageOps(settings.SubCmdRmiOfSealer, tagImageName)
-				testhelper.CheckBeTrue(build.CheckIsImageExist(tagImageName))
+				testhelper.CheckNotBeTrue(build.CheckIsImageExist(tagImageName))
 
 				afterEnvMd5 := image.GetEnvDirMd5()
 				By(fmt.Sprintf("afterEnvMd5 is %s", afterEnvMd5))

@@ -227,7 +227,8 @@ var _ = Describe("sealer apply", func() {
 					usedCluster.Spec.Nodes.Count = "3"
 					usedCluster.Spec.Masters.Count = "3"
 					usedCluster = apply.CreateAliCloudInfraAndSave(usedCluster, tempFile)
-					sshClient = testhelper.NewSSHClientByCluster(usedCluster)
+					//waiting for service to start
+					time.Sleep(10 * time.Second)
 					joinNodes := strings.Join(usedCluster.Spec.Nodes.IPList[1:], ",")
 					//sealer join master and node
 					apply.SendAndJoinCluster(sshClient, tempFile, "", joinNodes)
