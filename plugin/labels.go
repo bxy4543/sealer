@@ -54,7 +54,7 @@ type label struct {
 	value string
 }
 
-func NewLabelsNodes() (Interface, error) {
+func NewLabelsPlugin() (Interface, error) {
 	c, err := k8s.Newk8sClient()
 	if err != nil {
 		return nil, err
