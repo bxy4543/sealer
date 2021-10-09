@@ -1,6 +1,9 @@
 name: Sealer-Test-Image
 
 on:
+  check_run:
+    types:
+      - created
   push:
     branches: "*"
   pull_request:
@@ -16,13 +19,18 @@ jobs:
     env:
       GO111MODULE: on
     steps:
+      - name: Dump steps context
+        env:
+          STEPS_CONTEXT: ${{ toJson(github.event) }}
+          STEPS_GITHUB: ${{ toJson(github) }}
+        run: |
+          echo "$STEPS_CONTEXT"
+          echo "$STEPS_GITHUB"
       - name: Github API Request
         id: request
         uses: octokit/request-action@v2.0.2
         with:
           route: ${{ github.event.issue.pull_request.url }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Get PR informations
         id: pr_data
         run: |
@@ -32,7 +40,6 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{fromJson(steps.request.outputs.data).head.repo.full_name}}
           ref: ${{fromJson(steps.request.outputs.data).head.ref}}
           path: src/github.com/alibaba/sealer
