@@ -1,9 +1,6 @@
 name: Sealer-Test-Image
 
 on:
-  check_run:
-    types:
-      - created
   push:
     branches: "*"
   pull_request:
@@ -15,7 +12,7 @@ jobs:
   build:
     name: test
     runs-on: ubuntu-latest
-    if: ${{ (github.event.issue.pull_request && (github.event.comment.body == '/test all' || github.event.comment.body == '/test image')) || (contains(github.ref, 'release') && github.repository == 'bxy4543/sealer') }}
+    if: ${{ (github.event.issue.pull_request && (github.event.comment.body == '/test all' || github.event.comment.body == '/test image')) || contains(toJson(github.event.labels), 'image-test') || (contains(github.ref, 'release') && github.repository == 'bxy4543/sealer') }}
     env:
       GO111MODULE: on
     steps:

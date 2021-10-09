@@ -10,6 +10,10 @@ on:
       - 'vendor/**'
       - '*.md'
       - '*.yml'
+  issue_comment:
+    types:
+      - created
+
 jobs:
 
   build:
@@ -17,6 +21,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Dump steps context event
+        env:
+          STEPS_CONTEXT: ${{ toJson(github.event) }}
+        run: |
+          echo "$STEPS_CONTEXT"
+      - name: Dump steps context
+        env:
+          STEPS_GITHUB: ${{ toJson(github) }}
+        run: |
+          echo "$STEPS_GITHUB"
 
       - name: Set up Go
         uses: actions/setup-go@v2
@@ -28,9 +42,9 @@ jobs:
         uses: actions/checkout@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{fromJson(steps.request.outputs.data).head.repo.full_name}}
-          ref: ${{fromJson(steps.request.outputs.data).head.ref}}
+          ref: ${{ github.ref }}
           path: src/github.com/alibaba/sealer
+
       - name: Check out code lic
         working-directory: src/github.com/alibaba/sealer
         run: |
