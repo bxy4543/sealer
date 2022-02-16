@@ -8,6 +8,7 @@ on:
 name: Static page
 jobs:
   build:
+    if: ${{ (github.repository == 'bxy4543/sealer' && github.ref_type=='tag') || (github.event.issue.pull_request && github.event.comment.body == '/docs') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
