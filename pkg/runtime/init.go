@@ -198,10 +198,9 @@ func (k *KubeadmRuntime) CopyStaticFiles(nodes []string) error {
 }
 
 //decode output to join token hash and key
-func (k *KubeadmRuntime) decodeMaster0Output(output []byte) {
-	s0 := string(output)
-	logger.Debug("decodeOutput: %s", s0)
-	slice := strings.Split(s0, "kubeadm join")
+func (k *KubeadmRuntime) decodeMaster0Output(output string) {
+	logger.Debug("decodeOutput: %s", output)
+	slice := strings.Split(output, "kubeadm join")
 	slice1 := strings.Split(slice[1], "Please note")
 	logger.Info("join command is: kubeadm join %s", slice1[0])
 	k.decodeJoinCmd(slice1[0])
@@ -252,9 +251,9 @@ func (k *KubeadmRuntime) InitMaster0() error {
 	cmdInit := k.Command(k.getKubeVersion(), InitMaster)
 
 	// TODO skip docker version error check for test
-	output, err := ssh.Cmd(k.GetMaster0IP(), cmdInit)
+	output, err := ssh.CmdAsyncResult(k.GetMaster0IP(), cmdInit)
 	if err != nil {
-		_, wErr := common.StdOut.WriteString(string(output))
+		_, wErr := common.StdOut.WriteString(output)
 		if wErr != nil {
 			return err
 		}

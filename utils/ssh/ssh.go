@@ -37,6 +37,8 @@ type Interface interface {
 	Fetch(host, srcFilePath, dstFilePath string) error
 	// CmdAsync exec command on remote host, and asynchronous return logs
 	CmdAsync(host string, cmd ...string) error
+	// CmdAsyncResult exec command on remote host, and asynchronous return logs, and return combined standard output and standard error
+	CmdAsyncResult(host string, cmd string) (string, error)
 	// Cmd exec command on remote host, and return combined standard output and standard error
 	Cmd(host, cmd string) ([]byte, error)
 	// IsFileExist check remote file exist or not

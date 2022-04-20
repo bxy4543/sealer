@@ -31,10 +31,11 @@ import (
 	"github.com/alibaba/sealer/utils"
 
 	"github.com/alibaba/sealer/common"
-	"github.com/alibaba/sealer/logger"
 	v2 "github.com/alibaba/sealer/types/api/v2"
 	"github.com/alibaba/sealer/utils/ssh"
 )
+
+var VLog int
 
 type Config struct {
 	Vlog      int
@@ -60,10 +61,7 @@ func newKubeadmRuntime(cluster *v2.Cluster, clusterFileKubeConfig *KubeadmConfig
 	if err := k.checkList(); err != nil {
 		return nil, err
 	}
-
-	if logger.IsDebugModel() {
-		k.Vlog = 6
-	}
+	k.Vlog = VLog
 	return k, nil
 }
 

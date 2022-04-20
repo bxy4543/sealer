@@ -115,6 +115,49 @@ func (s *SSH) CmdAsync(host string, cmds ...string) error {
 	return nil
 }
 
+func (s *SSH) CmdAsyncResult(host string, cmd string) (string, error) {
+	if s.User != common.ROOT {
+		cmd = SUDO + cmd
+	}
+	client, session, err := s.Connect(host)
+	if err != nil {
+		return "", fmt.Errorf("failed to create ssh session for %s: %v", host, err)
+	}
+	defer client.Close()
+	defer session.Close()
+	stdout, err := session.StdoutPipe()
+	if err != nil {
+		return "", fmt.Errorf("failed to create stdout pipe for %s: %v", host, err)
+	}
+	stderr, err := session.StderrPipe()
+	if err != nil {
+		return "", fmt.Errorf("failed to create stderr pipe for %s: %v", host, err)
+	}
+	if err := session.Start(cmd); err != nil {
+		return "", fmt.Errorf("failed to start command %s on %s: %v", cmd, host, err)
+	}
+
+	var combineSlice []string
+	var combineLock sync.Mutex
+	doneout := make(chan error, 1)
+	doneerr := make(chan error, 1)
+	go func() {
+		doneerr <- readPipe(stderr, &combineSlice, &combineLock, s.isStdout)
+	}()
+	go func() {
+		doneout <- readPipe(stdout, &combineSlice, &combineLock, s.isStdout)
+	}()
+	<-doneerr
+	<-doneout
+
+	err = session.Wait()
+	result := strings.Join(combineSlice, "")
+	if err != nil {
+		return "", utils.WrapExecResult(host, cmd, []byte(result), err)
+	}
+	return result, nil
+}
+
 func (s *SSH) Cmd(host, cmd string) ([]byte, error) {
 	if s.User != common.ROOT {
 		cmd = SUDO + cmd

@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"github.com/alibaba/sealer/pkg/clusterfile"
+	"github.com/alibaba/sealer/pkg/runtime"
 	"github.com/spf13/cobra"
 
 	"github.com/alibaba/sealer/apply"
@@ -54,6 +55,7 @@ join to default cluster:
 func init() {
 	joinArgs = &common.RunArgs{}
 	rootCmd.AddCommand(joinCmd)
+	joinCmd.Flags().IntVarP(&runtime.VLog, "vlog", "v", 0, "number for the kubeadm log level verbosity")
 	joinCmd.Flags().StringVarP(&joinArgs.Masters, "masters", "m", "", "set Count or IPList to masters")
 	joinCmd.Flags().StringVarP(&joinArgs.Nodes, "nodes", "n", "", "set Count or IPList to nodes")
 	joinCmd.Flags().StringVarP(&clusterName, "cluster-name", "c", "", "submit one cluster name")

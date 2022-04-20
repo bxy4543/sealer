@@ -15,14 +15,10 @@
 package cmd
 
 import (
-	"os"
-
+	"github.com/alibaba/sealer/pkg/runtime"
 	"github.com/spf13/cobra"
 
 	"github.com/alibaba/sealer/apply"
-	"github.com/alibaba/sealer/logger"
-	"github.com/alibaba/sealer/utils"
-
 	"github.com/alibaba/sealer/common"
 	"github.com/alibaba/sealer/pkg/cert"
 )
@@ -64,7 +60,7 @@ create a cluster with custom environment variables:
 func init() {
 	runArgs = &common.RunArgs{}
 	rootCmd.AddCommand(runCmd)
-	runCmd.Flags().StringVarP(&runArgs.Provider, "provider", "", "", "set infra provider, example `ALI_CLOUD`, the local server need ignore this")
+	runCmd.Flags().IntVarP(&runtime.VLog, "vlog", "v", 0, "number for the kubeadm log level verbosity")
 	runCmd.Flags().StringVarP(&runArgs.Masters, "masters", "m", "", "set Count or IPList to masters")
 	runCmd.Flags().StringVarP(&runArgs.Nodes, "nodes", "n", "", "set Count or IPList to nodes")
 	runCmd.Flags().StringVar(&runArgs.ClusterName, "cluster-name", "my-cluster", "set cluster name")
@@ -75,11 +71,4 @@ func init() {
 	runCmd.Flags().StringVar(&runArgs.PkPassword, "pk-passwd", "", "set baremetal server private key password")
 	runCmd.Flags().StringSliceVar(&runArgs.CMDArgs, "cmd-args", []string{}, "set args for image cmd instruction")
 	runCmd.Flags().StringSliceVarP(&runArgs.CustomEnv, "env", "e", []string{}, "set custom environment variables")
-	err := runCmd.RegisterFlagCompletionFunc("provider", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		return utils.ContainList([]string{common.BAREMETAL, common.AliCloud, common.CONTAINER}, toComplete), cobra.ShellCompDirectiveNoFileComp
-	})
-	if err != nil {
-		logger.Error("provide completion for provider flag, err: %v", err)
-		os.Exit(1)
-	}
 }

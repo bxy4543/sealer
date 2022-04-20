@@ -41,5 +41,6 @@ var applyCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(applyCmd)
 	applyCmd.Flags().StringVarP(&clusterFile, "Clusterfile", "f", "Clusterfile", "apply a kubernetes cluster")
+	applyCmd.Flags().IntVarP(&runtime.VLog, "vlog", "v", 0, "number for the kubeadm log level verbosity")
 	applyCmd.Flags().BoolVar(&runtime.ForceDelete, "force", false, "We also can input an --force flag to delete cluster by force")
 }
