@@ -44,14 +44,14 @@ jobs:
           sudo sed -i "s/v1.19.8/$version/g" ${cridir}/rootfs/etc/kubeadm.yml ##change version
           sudo sed -i "s/kubeadm.k8s.io\/v1beta2/$kubeadmApiVersion/g" ${cridir}/rootfs/etc/kubeadm.yml
           sudo ./amd64/bin/kubeadm config images list --config $cridir/rootfs/etc/kubeadm.yml
-          sudo ./amd64/bin/kubeadm config images list --config $cridir/rootfs/etc/kubeadm.yml 2>/dev/null>> imageList
+          sudo ./amd64/bin/kubeadm config images list --config $cridir/rootfs/etc/kubeadm.yml 2>/dev/null>> imageList && echo 1
           if [ $(sudo ./amd64/bin/kubeadm config images list --config $cridir/rootfs/etc/kubeadm.yml 2>/dev/null |grep -c "coredns/coredns") -gt 0 ]; then sudo sed -i "s/#imageRepository/imageRepository/g" $cridir/rootfs/etc/kubeadm.yml; fi
-          sudo sed -i "s/k8s.gcr.io/sea.hub:5000/g" $cridir/rootfs/etc/kubeadm.yml
-          sudo sed -i "s/sea.hub:5000\/pause:3.6/$(grep pause imageList |sed 's/\//\\\//g')/g" containerdRootfs/rootfs/etc/dump-config.toml
-          sudo cp -r $cridir/* .
-          buildName=registry.cn-qingdao.aliyuncs.com/sealer-io/kubernetes
-          if [[ "$cri" = "containerd" ]] && ! version_compare "$version" "v1.24.0"; then buildName=${buildName}-containerd;fi
-          sudo sealer build -t ${buildName}:${version}-alpine -f Kubefile --platform linux/arm64,linux/amd64 .
+          sudo sed -i "s/k8s.gcr.io/sea.hub:5000/g" $cridir/rootfs/etc/kubeadm.yml && echo 2
+          sudo sed -i "s/sea.hub:5000\/pause:3.6/$(grep pause imageList |sed 's/\//\\\//g')/g" containerdRootfs/rootfs/etc/dump-config.toml && echo 3
+          sudo cp -r $cridir/* . && echo 3
+          buildName=registry.cn-qingdao.aliyuncs.com/sealer-io/kubernetes && echo 4
+          if [[ "$cri" = "containerd" ]] && ! version_compare "$version" "v1.24.0"; then buildName=${buildName}-containerd;fi && echo 5
+          sudo sealer build -t ${buildName}:${version}-alpine -f Kubefile --platform linux/arm64,linux/amd64 . && echo 6
           sudo sealer push ${buildName}:${version}-alpine
           sudo sed -i "/FROM/d" calico/Kubefile && sudo echo "FROM ${buildName}:${version}-alpine
           `cat calico/Kubefile`" > calico/Kubefile
